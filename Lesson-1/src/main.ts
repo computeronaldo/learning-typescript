@@ -1,105 +1,115 @@
-let stringArr = ['one', 'hey', 'Dave'];
-
-let guitars = ['Strat', 'Les Paul', 5150];
-
-let mixedData = ['EVH', 1984, true];
-
-stringArr[0] = 'John';
-stringArr.push('hey');
-
-guitars[0] = 1984;
-guitars.unshift('Jim');
-
-// Does't work
-// stringArr = guitars;
-// guitars = mixedData;  
-// This works
-guitars = stringArr;
-
-mixedData = guitars;
-
-let test = [];
-let bands: string[] = [];
-bands.push('Van Halen');
-
-// Tuple  (type and position of type along with length of array is locked in as we define the tuple).
-// We can see for ourselves this being a more stricter version of an array. 
-let myTuple: [string, number, boolean] = ['Prajwal', 42, true];
-
-let mixed = ['John', 1, false];
-
-mixed = myTuple;
-
-// This is a problem because our source 'mixed' might have more or fewer elements but for our tuple length is fixed.
-// myTuple = mixed;
-// myTuple[3] = 32;
-myTuple[1] = 32;
-
-// Objects
-let myObj: object
-
-// what!!!!!!!!!
-myObj = [];
-
-myObj = {};
-
-const exampleObj = {
-    prop1: 'Prajwal',
-    prop2: true
-}
-
-exampleObj.prop1 = 'Mikel';
-exampleObj.prop2 = false;
-
-// This helps a lot to omit writing same code over and over
-type Guitarist = {
-    name?: string;
-    active: boolean;
-    albums: (string | number)[]
-}
-
 // We can think of interface like defining a class all the data members and methods.
 // The only difference from defining a class is in an interface we will define type of
 // data members and methods
 
-// interface Guitarist {
-//     name: string;
-//     active?: boolean;
-//     albums: (string | number)[]
-// }
+// Type are more of an Aliases
+type stringOrNumber = string | number;
 
-let evh: Guitarist = {
-    name: 'Eddie',
-    active: false,
-    albums: [1984, 5150, 'OU812']
+type stringOrNumberArray = (string | number)[];
+
+type Guitarist = {
+    name?: string;
+    active: boolean;
+    albums: stringOrNumberArray;
 }
 
-let jp: Guitarist = {
-    name: 'Jimmy',
-    active: true,
-    albums: ['I', 'II', 'IV']
+type UserId = stringOrNumberArray;
+
+// This won't work!
+// interface PostId = stringOrNumber
+
+// Literal Types
+let myName: 'Prajwal'
+myName = 'Prajwal'
+
+// myName = 'John' // won't work
+
+let userName: 'John' | 'Dave' | 'Michel'
+userName = 'Michel'
+
+
+// Both literal types and type aliases help to keep our code DRY.
+
+// functions
+const add = (a: number, b: number): number => {
+    return a + b
 }
 
-evh = jp;
+const logMsg = (message: any): void => {
+    console.log(message);
+}
 
-const greetGuitarist = (guitarist: Guitarist) => {
-    if(guitarist.name) {
-        return `Hello ${guitarist.name.toLowerCase()}!`;
+logMsg('Heelo');
+logMsg(add(2, 4));
+
+let subtract = function (c: number, d: number): number {
+    return c - d;
+}
+
+type mathFunction = (a: number, b: number) => number
+
+let multiply: mathFunction = (c, d) => {
+    return c * d;
+}
+
+logMsg(multiply(2, 2));
+
+// optional parameters
+const addAll = (a: number, b: number, c?: number): number => {
+    if(typeof c !== 'undefined') {
+        return a + b + c;
     }
-    return 'Hello!'
+    return a + b;
 }
 
-console.log(greetGuitarist(jp));
-
-// Enums
-// "Unlike most TS features, Enums are not a type-level addition to JS but something added to the language and runtime"
-
-enum Grade {
-    U = 1,
-    D,
-    C,
-    B,
-    A
+// default parameter value
+const sumAll = (a: number = 2, b: number, c: number = 2): number => {
+    return a + b + c;
 }
 
-console.log(Grade.U);
+logMsg(addAll(2, 3, 2));
+logMsg(addAll(2, 5));
+logMsg(sumAll(2, 3));
+logMsg(sumAll(undefined, 2, 2));
+logMsg(sumAll(undefined, 3));
+
+// Rest parameter
+const total = (a: number, ...nums: number[]): number => {
+    return a + nums.reduce((cur, acc) => {
+        return cur + acc;
+    }, 0);
+}
+
+logMsg(total(2, 3, 3));
+logMsg(total(1, 2, 3));
+logMsg(total(2));
+
+const createError = (errMsg: string): never => {
+    throw new Error(errMsg)
+}
+
+const infinite = () => {
+    let i: number = 1;
+    while(true) {
+        i++;
+        if(i > 100) {
+            break;
+        }
+    }
+}
+
+const isNumber = (value: any): boolean => {
+    return (typeof value === 'number');
+}
+
+const numberOrString = (value: (number | string)): string => {
+    if(typeof value === 'string') return 'string';
+    // if(typeof value === 'number') return 'number';
+    if(isNumber(value)) return 'number';
+    // well to take typescript happy our function should return
+    // a never type in case none of the above specified type guard
+    // check passes. createError function return never type and 
+    // satisfied typescript and stops it from showing those red
+    // squigily lines.
+    return createError('This should never happen');
+} 

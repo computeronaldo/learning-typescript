@@ -1,74 +1,82 @@
 "use strict";
-let stringArr = ['one', 'hey', 'Dave'];
-let guitars = ['Strat', 'Les Paul', 5150];
-let mixedData = ['EVH', 1984, true];
-stringArr[0] = 'John';
-stringArr.push('hey');
-guitars[0] = 1984;
-guitars.unshift('Jim');
-// Does't work
-// stringArr = guitars;
-// guitars = mixedData;  
-// This works
-guitars = stringArr;
-mixedData = guitars;
-let test = [];
-let bands = [];
-bands.push('Van Halen');
-// Tuple  (type and position of type along with length of array is locked in as we define the tuple).
-// We can see for ourselves this being a more stricter version of an array. 
-let myTuple = ['Prajwal', 42, true];
-let mixed = ['John', 1, false];
-mixed = myTuple;
-// This is a problem because our source 'mixed' might have more or fewer elements but for our tuple length is fixed.
-// myTuple = mixed;
-// myTuple[3] = 32;
-myTuple[1] = 32;
-// Objects
-let myObj;
-// what!!!!!!!!!
-myObj = [];
-myObj = {};
-const exampleObj = {
-    prop1: 'Prajwal',
-    prop2: true
-};
-exampleObj.prop1 = 'Mikel';
-exampleObj.prop2 = false;
 // We can think of interface like defining a class all the data members and methods.
 // The only difference from defining a class is in an interface we will define type of
 // data members and methods
-// interface Guitarist {
-//     name: string;
-//     active?: boolean;
-//     albums: (string | number)[]
-// }
-let evh = {
-    name: 'Eddie',
-    active: false,
-    albums: [1984, 5150, 'OU812']
+// This won't work!
+// interface PostId = stringOrNumber
+// Literal Types
+let myName;
+myName = 'Prajwal';
+// myName = 'John' // won't work
+let userName;
+userName = 'Michel';
+// Both literal types and type aliases help to keep our code DRY.
+// functions
+const add = (a, b) => {
+    return a + b;
 };
-let jp = {
-    name: 'Jimmy',
-    active: true,
-    albums: ['I', 'II', 'IV']
+const logMsg = (message) => {
+    console.log(message);
 };
-evh = jp;
-const greetGuitarist = (guitarist) => {
-    if (guitarist.name) {
-        return `Hello ${guitarist.name.toLowerCase()}!`;
+logMsg('Heelo');
+logMsg(add(2, 4));
+let subtract = function (c, d) {
+    return c - d;
+};
+let multiply = (c, d) => {
+    return c * d;
+};
+logMsg(multiply(2, 2));
+// optional parameters
+const addAll = (a, b, c) => {
+    if (typeof c !== 'undefined') {
+        return a + b + c;
     }
-    return 'Hello!';
+    return a + b;
 };
-console.log(greetGuitarist(jp));
-// Enums
-// "Unlike most TS features, Enums are not a type-level addition to JS but something added to the language and runtime"
-var Grade;
-(function (Grade) {
-    Grade[Grade["U"] = 1] = "U";
-    Grade[Grade["D"] = 2] = "D";
-    Grade[Grade["C"] = 3] = "C";
-    Grade[Grade["B"] = 4] = "B";
-    Grade[Grade["A"] = 5] = "A";
-})(Grade || (Grade = {}));
-console.log(Grade.U);
+// default parameter value
+const sumAll = (a = 2, b, c = 2) => {
+    return a + b + c;
+};
+logMsg(addAll(2, 3, 2));
+logMsg(addAll(2, 5));
+logMsg(sumAll(2, 3));
+logMsg(sumAll(undefined, 2, 2));
+logMsg(sumAll(undefined, 3));
+// Rest parameter
+const total = (a, ...nums) => {
+    return a + nums.reduce((cur, acc) => {
+        return cur + acc;
+    }, 0);
+};
+logMsg(total(2, 3, 3));
+logMsg(total(1, 2, 3));
+logMsg(total(2));
+const createError = (errMsg) => {
+    throw new Error(errMsg);
+};
+const infinite = () => {
+    let i = 1;
+    while (true) {
+        i++;
+        if (i > 100) {
+            break;
+        }
+    }
+};
+const isNumber = (value) => {
+    return (typeof value === 'number');
+};
+const numberOrString = (value) => {
+    if (typeof value === 'string')
+        return 'string';
+    // if(typeof value === 'number') return 'number';
+    if (isNumber(value))
+        return 'number';
+    // well to take typescript happy our function should return
+    // a never type in case none of the above specified type guard
+    // check passes. createError function return never type and 
+    // satisfied typescript and stops it from showing those red
+    // squigily lines.
+    return createError('This should never happen');
+};
