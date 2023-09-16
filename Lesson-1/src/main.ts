@@ -1,115 +1,47 @@
-// We can think of interface like defining a class all the data members and methods.
-// The only difference from defining a class is in an interface we will define type of
-// data members and methods
+// Type assertion or casting
 
-// Type are more of an Aliases
-type stringOrNumber = string | number;
+type One = string;
+type Two = string | number;
+type Three = 'Hello'
 
-type stringOrNumberArray = (string | number)[];
+// Convert to more or less specific type
+let a: One = 'Hello'
+let b = a as Two // less specific
 
-type Guitarist = {
-    name?: string;
-    active: boolean;
-    albums: stringOrNumberArray;
+// Hover over this by setting type One = number
+// let c = a as Three // more specific
+
+let c = a as Three 
+
+let d = <One>'world'
+let e = <string | number>'world'
+
+// a use case for type assertion
+const addOrConcat = (a: number, b: number, c: ('add' | 'concat')): (number | string) => {
+    if(c === 'add') {
+        return a + b;
+    } 
+    return '' + a + b;
 }
 
-type UserId = stringOrNumberArray;
+// essentially we are telling react we know better
+let myVal: string = addOrConcat(2, 2, 'concat') as string;
 
-// This won't work!
-// interface PostId = stringOrNumber
+// be careful -  a string is returned
+let nextVal: number = addOrConcat(2, 2, 'concat') as number;
+let currVal: Three = addOrConcat(2, 2, 'concat') as Three;
 
-// Literal Types
-let myName: 'Prajwal'
-myName = 'Prajwal'
+// forced type conversion
+(10 as unknown) as string
 
-// myName = 'John' // won't work
+// The DOM this is where type assertion really shines
 
-let userName: 'John' | 'Dave' | 'Michel'
-userName = 'Michel'
+// ! -> non-null assertion
+// we are telling typescript that we know better than it and 
+// their is an image by id '#img' as it is not going to be null
+const myImg = document.getElementById('#img')! as HTMLImageElement;
+const img = document.querySelector('img') as HTMLImageElement;
+const nextImg = <HTMLImageElement> document.querySelector('img');
 
-
-// Both literal types and type aliases help to keep our code DRY.
-
-// functions
-const add = (a: number, b: number): number => {
-    return a + b
-}
-
-const logMsg = (message: any): void => {
-    console.log(message);
-}
-
-logMsg('Heelo');
-logMsg(add(2, 4));
-
-let subtract = function (c: number, d: number): number {
-    return c - d;
-}
-
-type mathFunction = (a: number, b: number) => number
-
-let multiply: mathFunction = (c, d) => {
-    return c * d;
-}
-
-logMsg(multiply(2, 2));
-
-// optional parameters
-const addAll = (a: number, b: number, c?: number): number => {
-    if(typeof c !== 'undefined') {
-        return a + b + c;
-    }
-    return a + b;
-}
-
-// default parameter value
-const sumAll = (a: number = 2, b: number, c: number = 2): number => {
-    return a + b + c;
-}
-
-logMsg(addAll(2, 3, 2));
-logMsg(addAll(2, 5));
-logMsg(sumAll(2, 3));
-logMsg(sumAll(undefined, 2, 2));
-logMsg(sumAll(undefined, 3));
-
-// Rest parameter
-const total = (a: number, ...nums: number[]): number => {
-    return a + nums.reduce((cur, acc) => {
-        return cur + acc;
-    }, 0);
-}
-
-logMsg(total(2, 3, 3));
-logMsg(total(1, 2, 3));
-logMsg(total(2));
-
-const createError = (errMsg: string): never => {
-    throw new Error(errMsg)
-}
-
-const infinite = () => {
-    let i: number = 1;
-    while(true) {
-        i++;
-        if(i > 100) {
-            break;
-        }
-    }
-}
-
-const isNumber = (value: any): boolean => {
-    return (typeof value === 'number');
-}
-
-const numberOrString = (value: (number | string)): string => {
-    if(typeof value === 'string') return 'string';
-    // if(typeof value === 'number') return 'number';
-    if(isNumber(value)) return 'number';
-    // well to take typescript happy our function should return
-    // a never type in case none of the above specified type guard
-    // check passes. createError function return never type and 
-    // satisfied typescript and stops it from showing those red
-    // squigily lines.
-    return createError('This should never happen');
-} 
+img.src
+myImg.src
